@@ -30,33 +30,48 @@ var connection = require("../config/connection.js");
 // }
 
 var orm = {
-    selectAll: function (cb) {
-        var queryString = "SELECT * FROM burgers";
+    selectAll: function (tableInput, cb) {
+        var queryString = "SELECT * FROM " + tableInput + ";";
         connection.query(queryString, function (err, result) {
-            console.log("queryString: " + JSON.stringify(queryString));
+            //console.log("queryString: " + JSON.stringify(queryString));
             if (err) {
                 throw err;
             }
             cb(result);
-            console.log("result: " + JSON.stringify(result))
+            //console.log("result: " + JSON.stringify(result))
         })
     },
-    insertOne: function (burgerName, cb) {
-        var queryString = "INSERT INTO burgers (burger_name) VALUES (" + burgerName + ")";
+    insertOne: function (table, cols, vals, cb) {
+        var queryString = "INSERT INTO " + table;
+
+        queryString += " (";
+        queryString += cols.toString();
+        queryString += ") ";
+        queryString += "VALUES (";
+        queryString += "?";
+        queryString += ") ";
         
-        connection.query(queryString, function(err, result){
+        connection.query(queryString, vals, function(err, result){
             if (err) {
                 throw err;
             }
-            console.log("queryString: " + JSON.stringify(queryString));
+            console.log(queryString);
             cb(result);
         });
     },
-    updateOne: function (objColVals, condition, cb) {
-        var queryString = "UPDATE burgers SET ";
+    updateOne: function (table, objColVals, condition, cb) {
+        
+        if (objColVals == true) {
+            objColVals = 1
+        }
+        else {
+            objColVals = 0
+        };
+        var queryString = "UPDATE " + table;
 
-        queryString += objToSql(objColVals);
-        queryString += " WHERE ";
+        queryString += " SET devoured = ";
+        queryString += objColVals;
+        queryString += " WHERE id = ";
         queryString += condition;
 
         console.log("queryString: " + queryString);
@@ -68,6 +83,6 @@ var orm = {
             cb(result);
         });
     }
-}
+};
 
 module.exports = orm;
