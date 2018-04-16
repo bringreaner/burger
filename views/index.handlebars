@@ -1,0 +1,79 @@
+<h1>Burger Time</h1>
+
+<h3>Burgers that have not been eated</h3>
+
+<ul>
+    {{#each burger}}
+    {{#unless devoured}}
+    <li>
+        {{burger_name}}
+        <button class="change-devoured" data-id="{{id}}" data-newdevoured="{{devoured}}">
+            {{#if devoured}}DEVOUR{{/if}}
+        </button>
+        {{/unless}}
+    </li>
+    {{/each}}
+</ul>
+
+<h3>Available burgers</h3>
+
+<ul>
+    {{#each burger}} {{#if devoured}} {{/if}} {{/each}}
+</ul>
+
+<h2>Add a burger</h2>
+<form class="create-form">
+    <div class="form-group">
+        <label for="bu">Burger name:</label>
+        <input type="text" id="bu" name="name">
+    </div>
+
+    <button type="submit">Add burger</button>
+</form>
+
+<script type="javascript">
+    $(function() {
+        $(."change-devoured").on("click", function(event) {
+            var id = $(this).data("id");
+            var newBurger = $(this).data("newBurgerState");
+
+            var newBurgerState = {
+                devoured: newDevour
+            };
+
+            // send the PUT request.
+            $.ajax("/api/burgers" + id, {
+                type: "PUT",
+                data: newBurgerState
+            }).then(
+                function() {
+                    console.log("changed status to ", newBurger);
+                    // reload the page to get the updated list
+                    location.reload();
+                }
+            );
+        });
+
+        $(".create-form").on("submit", function(event){
+            //make sure to preventDefault on a submit event
+            event.preventDefault();
+
+            var newBurger = {
+                name: $("#bu").val().trim(),
+                devoured: $("[name=devoured]:checked").val().trim()
+            };
+        })
+
+
+        $.ajax("/api/burgers", {
+            type: "POST",
+            data: newBurger
+        }).then(
+            function() {
+                console.log("created new burger");
+                // reload the page to get updated list
+                location.reload();
+            }
+        )
+    }
+</script>
