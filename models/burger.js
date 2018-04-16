@@ -9,6 +9,7 @@ var burger = {
     selectAll: function (cb) {
         orm.selectAll(function (res) {
             cb(res);
+            console.log("orm: " + orm)
         })
     },
     //the variables cols and vals are arrays.
