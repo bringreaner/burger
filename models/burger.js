@@ -19,6 +19,7 @@ var burger = {
         });
     },
     updateOne: function(table, objColVals, condition, cb){
+        console.log("in burger.js model")
         orm.updateOne("burgers", objColVals, condition, function(res) {
             cb(res);
         });
